@@ -4,6 +4,7 @@ using System.Collections;
 #endif
 using System.Collections.Generic;
 using System.Text;
+using Innoactive.Hub;
 using UnityEngine;
 using Sentry;
 using UnityEngine.Networking;
@@ -328,7 +329,20 @@ public class SentrySdk : MonoBehaviour
         @event.tags.deviceUniqueIdentifier = SystemInfo.deviceUniqueIdentifier;
         @event.extra.unityVersion = Application.unityVersion;
         @event.extra.screenOrientation = Screen.orientation.ToString();
+
+        AttachHubData(@event);
     }
+
+    private void AttachHubData(SentryEvent @event)
+    {
+        // pass on the actual Hub user to sentry
+        @event.user = new User()
+        {
+            email = (Api.AuthenticationService.GetAuthenticatedUser() != null) ? Api.AuthenticationService.GetAuthenticatedUser().Email : "unknown@innoactive.de"
+        };
+    }
+
+
 
     private IEnumerator
 #if !UNITY_5
